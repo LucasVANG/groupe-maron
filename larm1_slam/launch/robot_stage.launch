@@ -2,6 +2,7 @@
  <node name="stageros" pkg="stage_ros" type="stageros" args="$(find stage_ros)/world/willow-erratic.world" >
  </node>
  <node name="move1" pkg="my_teleop" type="move.py" />
+ <node name="obstaclelist" pkg="larm1_slam" type="obstacle.py"/>
  <group if="$(arg rviz)">
     <node pkg="rviz" type="rviz" name="rviz" args="-d /opt/ros/noetic/share/stage_ros/rviz/stage.rviz"/>
  </group>
