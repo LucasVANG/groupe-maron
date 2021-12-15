@@ -5,12 +5,14 @@ from std_msgs.msg import Bool
 from sensor_msgs.msg import LaserScan
 
 def callback(data):
-    for i in range(420,660):
-        pub = rospy.Publisher('isObstacle', Bool, queue_size=10)
-        rate = rospy.Rate(200) # 10hz
-        if (data.ranges[i]<0.2):
+    for i in range(200,750):
+        rate = rospy.Rate(10) # 10hz
+        if (data.ranges[i]<0.45):
             pub.publish(True)
             rospy.loginfo(rospy.get_caller_id() + 'I heard %f %i',data.ranges[i],i)
+        else :
+            pub.publish(False)
+
 
 
 def obstacle():
@@ -22,6 +24,8 @@ def obstacle():
     # name for our 'listener' node so that multiple listeners can
     # run simultaneously.
     rospy.init_node('obstacle', anonymous=True)
+    global pub
+    pub = rospy.Publisher('isObstacle', Bool, queue_size=10)
 
 
     rospy.Subscriber('base_scan', LaserScan, callback)
