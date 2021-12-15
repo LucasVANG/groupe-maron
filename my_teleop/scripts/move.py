@@ -15,7 +15,6 @@ def move_command(data):
     # Compute cmd_vel here and publish... (do not forget to reduce timer duration)
     cmd= Twist()
     cmd.linear.x= 0.1
-    cmd.angular.z=0.1
     commandPublisher.publish(cmd)
 
 # call the move_command at a regular frequency:
