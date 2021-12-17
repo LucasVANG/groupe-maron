@@ -20,27 +20,20 @@ def move():
 
 # Publish velocity commandes:
 def move_command(data):
-    global i
-    i+=1
+
 
     # Compute cmd_vel here and publish... (do not forget to reduce timer duration)
     cmd= Twist()
 
     if data.data=="D":
-        cmd.angular.z=0.5
+        cmd.angular.z=10
         
     elif data.data=="G":
-        cmd.angular.z=-0.3
+        cmd.angular.z=-10
      
     else:
         cmd.linear.x= 0.3
     
-
-    if(i>300):
-        a=randint(-1,1)
-        cmd.angular.z+=50*a
-        i=0
-        
     pub.publish(cmd)
 
 if __name__ == '__main__':
