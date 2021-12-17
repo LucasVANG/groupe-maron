@@ -1,16 +1,15 @@
-
 #!/usr/bin/python3
-import math, rospy
+
+import rospy,math
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
+from std_msgs.msg import String
+
+rospy.init_node('obstacle', anonymous=True)
+pub = rospy.Publisher('isObstacle', String, queue_size=1)
 
 def interpret_scan(data):
-    rospy.init_node('obstacle', anonymous=True)
     global pub
-    pub = rospy.Publisher('isObstacle', float, queue_size=10)
-
-
-    rospy.loginfo('I get scans')
     obstacles= []
     angle= data.angle_min
     for aDistance in data.ranges :
@@ -21,9 +20,15 @@ def interpret_scan(data):
             ]
             obstacles.append( aPoint )
         angle+= data.angle_increment
-    rospy.loginfo( str(
-        [ [ round(p[0], 2), round(p[1], 2) ] for p in  obstacles[0:10] ] 
-    ) + " ..." )
-    pub.publish(obstacles)
+
+    msg= "Rien"
+    for t in obstacles:
+        if(0.1 < t[0] < 0.2):
+            if( -0.25 < t[1] < 0):
+                msg= "D"
+            if( 0.25 > t[1] > 0 ):
+                msg= "G"
+    pub.publish(msg)
 
 rospy.Subscriber('scan', LaserScan, interpret_scan)
+rospy.spin()
