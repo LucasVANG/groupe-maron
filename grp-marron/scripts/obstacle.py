@@ -1,38 +1,42 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
-import rospy
-from std_msgs.msg import Bool
+import rospy,math
+from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
-
-def callback(data):
-	rate = rospy.Rate(10) # 10hz
-	x=data.ranges[200:520]
-	if True in (t<2.45 for t in x):
-            pub.publish(True)
-            rospy.loginfo(rospy.get_caller_id() + 'I heard  ')
-	else:
-            pub.publish(False)
+from std_msgs.msg import String
 
 
+rospy.init_node('obstacle', anonymous=True)
+pub = rospy.Publisher('isObstacle', String, queue_size=5)
 
-def obstacle():
 
-
-    # In ROS, nodes are uniquely named. If two nodes with the same
-    # name are launched, the previous one is kicked off. The
-    # anonymous=True flag means that rospy will choose a unique
-    # name for our 'listener' node so that multiple listeners can
-    # run simultaneously.
-    rospy.init_node('obstacle', anonymous=True)
+def interpret_scan(data):
     global pub
-    pub = rospy.Publisher('isObstacle', Bool, queue_size=10)
+    obstacles= []
+    angle= data.angle_min
+    for aDistance in data.ranges :
+        if 0.1 < aDistance and aDistance < 5.0 :
+            aPoint= [ 
+                math.cos(angle) * aDistance, 
+                math.sin( angle ) * aDistance
+            ]
+            obstacles.append( aPoint )
+        angle+= data.angle_increment
+
+    rospy.loginfo( 'I get scans:' + str(len(obstacles)) + ' over ' + str(len(data.ranges)) )
+    for t in obstacles:
+        if(0.1 < t[0] < 0.5):
+            if( -0.25 < t[1] < 0):
+                pub.publish("D")
+                rospy.loginfo(t)
+
+            if( 0.25 > t[1] > 0 ):
+                pub.publish("G")
+                rospy.loginfo(t)
+        else:
+            pub.publish("r")
 
 
-    rospy.Subscriber('scan', LaserScan, callback)
-    
+rospy.Subscriber('scan', LaserScan, interpret_scan)
+rospy.spin()
 
-    # spin() simply keeps python from exiting until this node is stopped
-    rospy.spin()
-
-if __name__ == '__main__':
-    obstacle()
