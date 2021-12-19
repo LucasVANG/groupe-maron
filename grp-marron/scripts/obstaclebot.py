@@ -23,7 +23,7 @@ def interpret_scan(data):
 
     msg= "Rien"
     for t in obstacles:
-        if(0.1 < t[0] < 0.2):
+        if(0.1 < t[0] < 0.35):
             if( -0.25 < t[1] < 0):
                 msg= "D"
             if( 0.25 > t[1] > 0 ):
