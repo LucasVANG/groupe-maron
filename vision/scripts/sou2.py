@@ -16,7 +16,7 @@ hi=np.array([color+5, 255,100])
 
 color_info=(0, 0, 255)
 
-cap=cv2.VideoCapture(0)
+cap=cv2.VideoCapture(-1)
 cv2.namedWindow('Camera')
 cmd=Int32MultiArray()
 
