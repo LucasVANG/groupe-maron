@@ -24,10 +24,10 @@ def souris(event, x, y, flags, param):
     lo[0]=color-10
     hi[0]=color+10
 
-color=10
+color=175
 
-lo=np.array([color-5, 150, 200])
-hi=np.array([color+5, 200,255])
+lo=np.array([color-5, 140, 150])
+hi=np.array([color+5, 200,230])
 
 color_info=(0, 0, 255)
 
@@ -52,15 +52,15 @@ while True:
                font, 1, (255, 255, 255), 1, cv2.LINE_AA)
     
     image=cv2.blur(image, (7, 7))
-    mask=cv2.erode(mask, None, iterations=4)
-    mask=cv2.dilate(mask, None, iterations=4)
+    mask=cv2.erode(mask, None, iterations=1)
+    mask=cv2.dilate(mask, None, iterations=1)
                
 
     elements=cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     if len(elements) > 0:
         c=max(elements, key=cv2.contourArea)
         ((x, y), rayon)=cv2.minEnclosingCircle(c)
-        if rayon>15:
+        if rayon<10:
             cv2.circle(image2, (int(x), int(y)), int(rayon), color_info, 2)
             cv2.circle(frame, (int(x), int(y)), 5, color_info, 10)
             cv2.line(frame, (int(x), int(y)), (int(x)+150, int(y)), color_info, 2)
