@@ -15,11 +15,12 @@ def interpret_image(data):
     frame = bridge.imgmsg_to_cv2(temp_frame, desired_encoding='passthrough')
     
     cv2.namedWindow('Camera')
+    frame=cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     cv2.imshow('Camera',frame )
     cv2.waitKey(40)
     cmd=Int32MultiArray()
 
-    image=cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    image=cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
     mask=cv2.inRange(image, lo, hi)
     mask=cv2.erode(mask, None, iterations=1)
     mask=cv2.dilate(mask, None, iterations=1)
