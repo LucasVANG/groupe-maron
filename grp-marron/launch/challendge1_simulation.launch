@@ -17,4 +17,5 @@
     <group if="$(arg rviz)">
     	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find grp-marron)/rviz/challenge.rviz"/>
     </group>
+	<node name="gmapping" pkg="gmapping" type="slam_gmapping"/>
 </launch>
