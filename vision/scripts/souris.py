@@ -1,3 +1,4 @@
+import rospy
 import cv2
 import numpy as np
 
@@ -24,10 +25,10 @@ def souris(event, x, y, flags, param):
     lo[0]=color-10
     hi[0]=color+10
 
-color=175
+color=10
 
-lo=np.array([color-5, 140, 150])
-hi=np.array([color+5, 200,230])
+lo=np.array([color-5, 100, 200])
+hi=np.array([color+5, 255,255])
 
 color_info=(0, 0, 255)
 
