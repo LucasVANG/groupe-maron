@@ -9,21 +9,23 @@ from visualization_msgs.msg import Marker
 from std_msgs.msg import String
 import math as mth
 import random as rdm
+import tf
 
 rospy.init_node("new_bottle")
 pub = rospy.Publisher(
     '/bottle',
     Marker, queue_size=10
 )
+tfListener = tf.TransformListener()
+
 list_bottle=[]
 x=0
 y=0
-i=4
+i=1
 
 def initialize_marker(i,x,y):
-    print("test")
     marker = Marker()
-    marker.header.frame_id = 'camera' #self.global_frame
+    marker.header.frame_id = 'map' #self.global_frame
     marker.header.stamp=rospy.Time.now()
     marker.ns= "marker"
     marker.id= i
@@ -40,21 +42,25 @@ def initialize_marker(i,x,y):
     marker.color.g = 0.5
     marker.color.b = 0.0
     marker.color.a = 1.0
-    marker.scale.x = 0.1
-    marker.scale.y = 0.1
-    marker.scale.z = 0.2
+    marker.scale.x = 0.8
+    marker.scale.y = 0.8
+    marker.scale.z = 1.6
     return marker
 
 def marker(data):
     global pub,x,y,i,list_bottle
-    bouteille=initialize_marker(i,data.pose.position.x,data.pose.position.y)
+    global tfListener
+    poseMap= tfListener.transformPose("map", data)
+    x=poseMap.pose.position.x
+    y=poseMap.pose.position.y
+    bouteille=initialize_marker(i,x,y)
  
 
     if not list_bottle:
-        list_bottle=[[1,1], [4,4],[8,7],[16,18]]
+        list_bottle=[[x,y]]
     else:
         
-        if all(( mth.sqrt((x-n[0])**2 + (y-n[1])**2))>0.1 for n in list_bottle):
+        if all(( mth.sqrt((x-n[0])**2 + (y-n[1])**2))>0.4 for n in list_bottle):
             list_bottle.append([x,y])
             print(list_bottle)
         
@@ -63,16 +69,13 @@ def marker(data):
         else: 
             for a in range(0,i,1):
                 print(a,list_bottle[a][0],list_bottle[a][1])
-                if (( mth.sqrt((x-list_bottle[a][0])**2 + (y-list_bottle[a][1])**2))<0.1):
+                if (( mth.sqrt((x-list_bottle[a][0])**2 + (y-list_bottle[a][1])**2))<0.4):
                     list_bottle[a][0]=(list_bottle[a][0]+x)/2
                     list_bottle[a][1]=(list_bottle[a][1]+y)/2
                     print(a,list_bottle[a][0],list_bottle[a][1])
                     pub.publish(initialize_marker(a,list_bottle[a][0],list_bottle[a][1]))
 
 
-
-    x+=rdm.uniform(0,0.3)
-    y+=rdm.uniform(-0.2,0.2)
 
 
     

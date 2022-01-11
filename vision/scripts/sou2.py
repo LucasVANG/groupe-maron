@@ -22,15 +22,14 @@ def interpret_image(data):
     cmd=PoseStamped()
 
     image=cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
-    mask=cv2.inRange(image, lo, hi)
-    mask=cv2.erode(mask, None, iterations=1)
-    mask=cv2.dilate(mask, None, iterations=1)
-    image2=cv2.bitwise_and(frame, frame, mask= mask)
+
         
         # Affichage des composantes HSV sous la souris sur l'image
     image=cv2.blur(image, (7, 7))
-    mask=cv2.erode(mask, None, iterations=1)
-    mask=cv2.dilate(mask, None, iterations=1)
+    mask=cv2.inRange(image, lo, hi)
+    mask=cv2.erode(mask, None, iterations=6)
+    mask=cv2.dilate(mask, None, iterations=6)
+    image2=cv2.bitwise_and(frame, frame, mask= mask)
                 
 
     elements=cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
@@ -45,11 +44,12 @@ def interpret_image(data):
         coorFin=Coor(coorx,coory,rec[2],profondeur)
         if 10<rayon and profondeur>10:
             cmd=createPoseStampedPub(int(coorFin[0]),int(coorFin[1]))
-            pub.publish(cmd)
-            cv2.circle(image2, (int(x), int(y)), int(rayon), color_info, 2)
-            cv2.circle(frame, (int(x), int(y)), 5, color_info, 10)
-            cv2.line(frame, (int(x), int(y)), (int(x)+150, int(y)), color_info, 2)
-                
+            if cmd.pose.position.x<30 and cmd.pose.position.y<10:
+                pub.publish(cmd)
+                cv2.circle(image2, (int(x), int(y)), int(rayon), color_info, 2)
+                cv2.circle(frame, (int(x), int(y)), 5, color_info, 10)
+                cv2.line(frame, (int(x), int(y)), (int(x)+150, int(y)), color_info, 2)
+                    
     cv2.imshow('image2', image2)
     cv2.imshow('Mask', mask)
  
@@ -58,7 +58,7 @@ cv2.destroyAllWindows()
 def createPoseStampedPub(x,y):
     cmd=PoseStamped()
     cmd.header.stamp=rospy.Time.now()
-    cmd.header.frame_id='camera'
+    cmd.header.frame_id='/camera'
     cmd.pose.position.x=x/100
     cmd.pose.position.y=-y/100
     cmd.pose.position.z=0
@@ -74,11 +74,10 @@ def Coor(x,y,recx,pro):
     width=43.5*recx/640
     angle=43.5*(x-640)/640
     angle=angle*math.pi/180 # passage en radians
-    return [math.cos(angle) * pro, math.sin( angle ) * pro-35] 
+    return [math.cos(angle) * pro, math.sin( angle ) * pro] 
 
 def distance(data):
     global disArr
-    print("p")
     disArr=np.array(bridge.imgmsg_to_cv2(data,desired_encoding="passthrough"))
 
 def detection():
@@ -91,7 +90,7 @@ def detection():
     rospy.loginfo(rospy.get_caller_id() + 'I heard ')
 
     lo=np.array([100, 125, 200])
-    hi=np.array([150, 255,255])
+    hi=np.array([110, 255,255])
     rate=rospy.Rate(10)
     color_info=(0, 0, 255)
     rospy.Subscriber('camera/color/image_raw', Image, interpret_image)
