@@ -2,8 +2,9 @@
 
 import rospy
 import numpy as np
-from std_msgs.msg import Int32MultiArray
-from geometry_msgs.msg import PointStamped
+
+from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import Pose
 from visualization_msgs.msg import Marker
 from std_msgs.msg import String
 import math as mth
@@ -22,7 +23,7 @@ i=4
 def initialize_marker(i,x,y):
     print("test")
     marker = Marker()
-    marker.header.frame_id = 'map' #self.global_frame
+    marker.header.frame_id = 'camera' #self.global_frame
     marker.header.stamp=rospy.Time.now()
     marker.ns= "marker"
     marker.id= i
@@ -46,28 +47,27 @@ def initialize_marker(i,x,y):
 
 def marker(data):
     global pub,x,y,i,list_bottle
-    bouteille=initialize_marker(i,x,y)
-    b=rdm.uniform(0,1)
-    if (b<0.2):
+    bouteille=initialize_marker(i,data.pose.position.x,data.pose.position.y)
+ 
 
-        if not list_bottle:
-            list_bottle=[[1,1], [4,4],[8,7],[16,18]]
-        else:
-            
-            if all(( mth.sqrt((x-n[0])**2 + (y-n[1])**2))>0.1 for n in list_bottle):
-                list_bottle.append([x,y])
-                print(list_bottle)
-            
-                pub.publish(bouteille)
-                i+=1
-            else: 
-                for a in range(0,i,1):
+    if not list_bottle:
+        list_bottle=[[1,1], [4,4],[8,7],[16,18]]
+    else:
+        
+        if all(( mth.sqrt((x-n[0])**2 + (y-n[1])**2))>0.1 for n in list_bottle):
+            list_bottle.append([x,y])
+            print(list_bottle)
+        
+            pub.publish(bouteille)
+            i+=1
+        else: 
+            for a in range(0,i,1):
+                print(a,list_bottle[a][0],list_bottle[a][1])
+                if (( mth.sqrt((x-list_bottle[a][0])**2 + (y-list_bottle[a][1])**2))<0.1):
+                    list_bottle[a][0]=(list_bottle[a][0]+x)/2
+                    list_bottle[a][1]=(list_bottle[a][1]+y)/2
                     print(a,list_bottle[a][0],list_bottle[a][1])
-                    if (( mth.sqrt((x-list_bottle[a][0])**2 + (y-list_bottle[a][1])**2))<0.1):
-                        list_bottle[a][0]=(list_bottle[a][0]+x)/2
-                        list_bottle[a][1]=(list_bottle[a][1]+y)/2
-                        print(a,list_bottle[a][0],list_bottle[a][1])
-                        pub.publish(initialize_marker(a,list_bottle[a][0],list_bottle[a][1]))
+                    pub.publish(initialize_marker(a,list_bottle[a][0],list_bottle[a][1]))
 
 
 
@@ -78,7 +78,7 @@ def marker(data):
     
     
 def start():
-    rospy.Subscriber('chatter', String, marker)
+    rospy.Subscriber('/can',PoseStamped, marker)
     rospy.spin()
 if __name__ == '__main__':
     start()

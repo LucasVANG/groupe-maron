@@ -2,23 +2,24 @@
 import rospy
 import cv2
 import numpy as np
-from std_msgs.msg import Int32MultiArray
+from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
+import math
 
 bridge = CvBridge()
  
 
 def interpret_image(data):
     temp_frame=data
-    global bridge,color,lo,hi,color_info,disarr
+    global bridge,color,lo,hi,color_info,disArr
     frame = bridge.imgmsg_to_cv2(temp_frame, desired_encoding='passthrough')
     
     cv2.namedWindow('Camera')
     frame=cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     cv2.imshow('Camera',frame )
     cv2.waitKey(40)
-    cmd=Int32MultiArray()
+    cmd=PoseStamped()
 
     image=cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
     mask=cv2.inRange(image, lo, hi)
@@ -36,10 +37,14 @@ def interpret_image(data):
         
     if len(elements) > 0:
         c=max(elements, key=cv2.contourArea)
+        rec=cv2.boundingRect(c)
         ((x, y), rayon)=cv2.minEnclosingCircle(c)
-        profondeur=disarr[int(y)][int(x)]
-        if 10<rayon<400 and profondeur>50:
-            cmd.data=[int(x),int(y),profondeur]
+        profondeur=disArr[int(y)][int(x)]
+        coorx=int(rec[0]+(rec[2])/2)
+        coory=int(rec[1]+(rec[3])/2)
+        coorFin=Coor(coorx,coory,rec[2],profondeur)
+        if 10<rayon and profondeur>10:
+            cmd=createPoseStampedPub(int(coorFin[0]),int(coorFin[1]))
             pub.publish(cmd)
             cv2.circle(image2, (int(x), int(y)), int(rayon), color_info, 2)
             cv2.circle(frame, (int(x), int(y)), 5, color_info, 10)
@@ -50,16 +55,38 @@ def interpret_image(data):
  
 cv2.destroyAllWindows()
 
+def createPoseStampedPub(x,y):
+    cmd=PoseStamped()
+    cmd.header.stamp=rospy.Time.now()
+    cmd.header.frame_id='camera'
+    cmd.pose.position.x=x/100
+    cmd.pose.position.y=-y/100
+    cmd.pose.position.z=0
+    cmd.pose.orientation.x=0
+    cmd.pose.orientation.y=0
+    cmd.pose.orientation.z=0
+    cmd.pose.orientation.w=1
+    return cmd
+
+
+def Coor(x,y,recx,pro):
+    
+    width=43.5*recx/640
+    angle=43.5*(x-640)/640
+    angle=angle*math.pi/180 # passage en radians
+    return [math.cos(angle) * pro, math.sin( angle ) * pro-35] 
+
 def distance(data):
-    global disarr
-    disarr=np.array(bridge.imgmsg_to_cv2(data,desired_encoding="passthrough"))
+    global disArr
+    print("p")
+    disArr=np.array(bridge.imgmsg_to_cv2(data,desired_encoding="passthrough"))
 
 def detection():
     global lo,hi,pub,color_info
     rospy.init_node('objet', anonymous=True)
     pub = rospy.Publisher(
         'can',   
-        Int32MultiArray, queue_size=10
+        PoseStamped, queue_size=10
     )
     rospy.loginfo(rospy.get_caller_id() + 'I heard ')
 
