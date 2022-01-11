@@ -42,9 +42,9 @@ def interpret_image(data):
         coorx=int(rec[0]+(rec[2])/2)
         coory=int(rec[1]+(rec[3])/2)
         coorFin=Coor(coorx,coory,rec[2],profondeur)
-        if 10<rayon and profondeur>10:
+        if 15<rayon and 2000>profondeur>10:
             cmd=createPoseStampedPub(int(coorFin[0]),int(coorFin[1]))
-            if cmd.pose.position.x<30 and cmd.pose.position.y<10:
+            if cmd.pose.position.x<25 and cmd.pose.position.y<10:
                 pub.publish(cmd)
                 cv2.circle(image2, (int(x), int(y)), int(rayon), color_info, 2)
                 cv2.circle(frame, (int(x), int(y)), 5, color_info, 10)
@@ -89,9 +89,9 @@ def detection():
     )
     rospy.loginfo(rospy.get_caller_id() + 'I heard ')
 
-    lo=np.array([100, 125, 200])
+    lo=np.array([95, 150, 200])
     hi=np.array([110, 255,255])
-    rate=rospy.Rate(10)
+    rate=rospy.Rate(8)
     color_info=(0, 0, 255)
     rospy.Subscriber('camera/color/image_raw', Image, interpret_image)
     rospy.Subscriber("/camera/aligned_depth_to_color/image_raw", Image , distance)

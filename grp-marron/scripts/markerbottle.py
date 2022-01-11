@@ -66,7 +66,7 @@ def marker(data):
         
             pub.publish(bouteille)
             i+=1
-        else: 
+        else:
             for a in range(0,i,1):
                 print(a,list_bottle[a][0],list_bottle[a][1])
                 if (( mth.sqrt((x-list_bottle[a][0])**2 + (y-list_bottle[a][1])**2))<0.4):
@@ -74,6 +74,20 @@ def marker(data):
                     list_bottle[a][1]=(list_bottle[a][1]+y)/2
                     print(a,list_bottle[a][0],list_bottle[a][1])
                     pub.publish(initialize_marker(a,list_bottle[a][0],list_bottle[a][1]))
+                for b in range(0,a,1):
+                    dist = mth.sqrt((list_bottle[b][0]-list_bottle[a][0])**2 + (list_bottle[b][1]-list_bottle[a][1])**2)
+                    if dist<0.1:
+                        print("yes")
+                        bottle=initialize_marker(a,list_bottle[a][0],list_bottle[a][1])
+                        bottle.action=Marker.DELETE
+                        list_bottle.pop(a)
+                        i-=1
+                        pub.publish(bottle)
+                        print(len(list_bottle))
+                        
+
+                        
+
 
 
 
