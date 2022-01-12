@@ -42,9 +42,9 @@ def initialize_marker(i,x,y):
     marker.color.g = 0.5
     marker.color.b = 0.0
     marker.color.a = 1.0
-    marker.scale.x = 0.8
-    marker.scale.y = 0.8
-    marker.scale.z = 1.6
+    marker.scale.x = 0.08
+    marker.scale.y = 0.08
+    marker.scale.z = 0.16
     return marker
 
 def marker(data):
@@ -60,7 +60,7 @@ def marker(data):
         list_bottle=[[x,y]]
     else:
         
-        if all(( mth.sqrt((x-n[0])**2 + (y-n[1])**2))>0.4 for n in list_bottle):
+        if all(( mth.sqrt((x-n[0])**2 + (y-n[1])**2))>0.3 for n in list_bottle):
             list_bottle.append([x,y])
             print(list_bottle)
         
@@ -69,7 +69,7 @@ def marker(data):
         else:
             for a in range(0,i,1):
                 print(a,list_bottle[a][0],list_bottle[a][1])
-                if (( mth.sqrt((x-list_bottle[a][0])**2 + (y-list_bottle[a][1])**2))<0.4):
+                if (( mth.sqrt((x-list_bottle[a][0])**2 + (y-list_bottle[a][1])**2))<0.2):
                     list_bottle[a][0]=(list_bottle[a][0]+x)/2
                     list_bottle[a][1]=(list_bottle[a][1]+y)/2
                     print(a,list_bottle[a][0],list_bottle[a][1])
