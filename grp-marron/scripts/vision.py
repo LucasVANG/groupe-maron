@@ -25,8 +25,8 @@ def interpret_image(data):
         # Affichage des composantes HSV sous la souris sur l'image
     image=cv2.blur(image, (7, 7))
     mask=cv2.inRange(image, lo, hi)
-    mask=cv2.erode(mask, None, iterations=6)
-    mask=cv2.dilate(mask, None, iterations=6)
+    mask=cv2.erode(mask, None, iterations=5)
+    mask=cv2.dilate(mask, None, iterations=5)
                 
 
     elements=cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
@@ -38,7 +38,7 @@ def interpret_image(data):
         profondeur=disArr[int(y)][int(x)]
         coorx=int(rec[0]+(rec[2])/2)
         coorFin=Coor(coorx,profondeur)
-        if 20<rayon and 4000>profondeur>10:
+        if 10<rayon and 4000>profondeur>10:
             cmd=createPoseStampedPub(int(coorFin[0]),int(coorFin[1]))
             if cmd.pose.position.x<2 and cmd.pose.position.y<1:
                 pub.publish(cmd)
@@ -84,7 +84,7 @@ def detection():
     )
     rospy.loginfo(rospy.get_caller_id() + 'I heard ')
 
-    lo=np.array([95, 240, 230])
+    lo=np.array([95, 235, 230])
     hi=np.array([110, 255,255])
     rate=rospy.Rate(10)
     color_info=(0, 0, 255)
