@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <node pkg="position" type="move-to.py" name="gogogo" output="screen" />
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find position)/rviz/position.rviz"/>
-    <node pkg="tf" type="static_transform_publisher" name="base_footprint_in_odom" args="0.0 1.0 0.00 0.0 0.0 1.57 /odom /base_footprint 80" />
-</launch>
