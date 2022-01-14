@@ -50,11 +50,30 @@ Les données de profondeurs sont sauvegardées dans une variable globable pour �
     
 On effectue ensuite un seuillage par couleur sur l'image reçu pour seulement récupérer l'objet voulu.
 
-Une fois fait on calcule les coordonnées de l'object detectés dans un repère cartésien avec la caméra comme origine du repère parallele au sol avec la fonction:
+Une fois fait on calcule les coordonnées de l'object detectés dans un repère cartésien avec la caméra comme origine du repère parallele au sol avec la fonction en récupérant la profondeur de l'objet:
 <br/>`def Coor(x,pro):`
     <br/>`angle=43.55*(x-640)/640`
     <br/>`angle=angle*math.pi/180 # passage en radians`
     <br/>`return [math.cos(angle) * pro, math.sin( angle ) * pro-35] ` 
+ 
+ 
+Une fois fait on vérifie certaines conditions (la taille de l'objet et sa distance pour limiter les erreurs quand la caméra détecte des objets trop éloignés),on publie ensuite l'objet en tant que PoseStamped dans le topic `can`.
+
+#####markerbottle.py
+
+On inialise le noeud en tant que publisher dans le topic `/bottle` et on l'abonne au topic `can`
+
+A chaque fois qu'il reçoit une position du topic il le transforme du repère de la caméra à celui de la map pour ensuite créer un marker correspondant à cette coordonnées dans la map:
+<br/>`poseMap= tfListener.transformPose("map", data)`
+<br/>`x=poseMap.pose.position.x`
+<br/>`y=poseMap.pose.position.y`
+<br/>`bouteille=initialize_marker(i,x,y)`
+
+
+    
+  
+
+
 
 
 
