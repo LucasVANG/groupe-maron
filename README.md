@@ -19,6 +19,9 @@ Le depôt est composé du package grp-marron et de ce README
 Ce package est composé de 3 répertoires et 2 fichiers textes :
 
 >CmakeLists.txt et package.xml qui sont présents pour le bon fonctionnement du package
+
 >scripts qui contient les deux noeuds de ce package
+
 >launch qui contient le launch challenge2 
+
 >rviz qui contient la configuration utilisé dans le launch de rviz
