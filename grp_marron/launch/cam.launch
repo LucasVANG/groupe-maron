@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    
-    <node pkg="rviz" type="rviz" name="rviz" />
-    <node pkg="vision" type="sou2.py" name="vis"/>
-    <node pkg="grp-marron" type="markerbottle.py" name="marker" output="screen" />
-
-</launch>
