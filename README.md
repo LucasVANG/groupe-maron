@@ -44,9 +44,9 @@ On définit le rate également afin d'éviter de traiter toutes les images mais 
 On définit également lo et hi pour déterminer l'intervalle de détection HSV.
 
 Les données de profondeurs sont sauvegardées dans une variable globable pour être utilisées dans le traitement de l'image avec :
-`def distance(data):
-    global disArr
-    disArr=np.array(bridge.imgmsg_to_cv2(data,desired_encoding="passthrough"))`
+>def distance(data):
+    >global disArr
+    >disArr=np.array(bridge.imgmsg_to_cv2(data,desired_encoding="passthrough"))
 
 
 
