@@ -25,7 +25,7 @@ def print_Bottle(req):
     else:
         for a in range(len(list_bottle)):
             if list_bottle[a][2]>10:
-                msg+="[x=" + str(list_bottle[a][0])+","+"y="+ str(list_bottle[a][1])+"]"
+                msg+="[x=" + str(round(list_bottle[a][0],2))+","+"y="+ str(round(list_bottle[a][1],2))+"]"
     return (True, "Voici les coordonnees des bouteilles detectees: " + msg)
 
 
