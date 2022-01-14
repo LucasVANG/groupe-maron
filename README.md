@@ -69,6 +69,13 @@ A chaque fois qu'il reçoit une position du topic il le transforme du repère de
 <br/>`y=poseMap.pose.position.y`
 <br/>`bouteille=initialize_marker(i,x,y)`
 
+Si il n'y a pas de bouteille sauvegarder on l'enregistre (même si il s'agit d'une erreur de détection cela sera réglé juste aprés)
+
+Sinon
+On vérifie si l'objet détecté est proch ou non d'une des bouteilles déjà placées sur la map. Si oui, on cosidère que c'est la même bouteille et on fait la moyenne de leur coordonnées pour avoir une position plus précise. Sinon on place l'objet comme une nouvelle bouteille. De même cette étape fera en sorte que la première bouteille detectée s'affichera (car elle sera detecter plusieurs fois) or si c'est une erreur, il n'y aura pas plusieurs détections et sera donc mise de côté et non publié comme marker.
+
+Chaque nouvelle bouteille a ses coordonnées en x,y sauvegarder dans une variable contenant la liste des bouteilles. De plus on vérifie que dans cette liste et dans les markers, il n'y a pas de boublons pour avoir le bon compte de bouteille au final.
+
 
     
   
