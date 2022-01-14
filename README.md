@@ -9,20 +9,20 @@ Une fois la branche récupérée, il faut effectuer catkin_make (et eventuelleme
 Pour lancer la solution créée il faut lancer la commande
 
 ```bash
-    roslaunch grp-marron challenge2.launch
+roslaunch grp-marron challenge2.launch
 ```
 
 Ce launch utilise l'horloge du rosbag lancée. Ainsi pour lancer le rosbag correctement il faut faire la commande 
 
 ```bash
-    rosbag play --clock nom_rosbag
+rosbag play --clock nom_rosbag
 ```
     
     
 Pour obtenir la liste des Bouteilles detectées il faut appeler le service `/Liste_Bouteille` avec la commande
 
 ```bash
-	rosservice call /Liste_Bouteille 0
+rosservice call /Liste_Bouteille 0
 ```
     
 qui  retournera deux varaibles :
