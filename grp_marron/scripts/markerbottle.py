@@ -25,8 +25,8 @@ def print_Bottle(req):
     else:
         for a in range(len(list_bottle)):
             if list_bottle[a][2]>10:
-                msg+="x=" + str(list_bottle[a][0])+","+"y="+ str(list_bottle[a][1])+"\n"
-    return (True, msg)
+                msg+="[x=" + str(list_bottle[a][0])+","+"y="+ str(list_bottle[a][1])+"]"
+    return (True, "Voici les coordonnees des bouteilles detectees: " + msg)
 
 
 tfListener = tf.TransformListener()
