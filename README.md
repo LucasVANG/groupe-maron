@@ -26,7 +26,7 @@ Ce package est composé de 3 répertoires et 2 fichiers textes :
 
 -rviz qui contient la configuration utilisé dans le launch de rviz
 
-####Composition du launch
+##### Composition du launch
 
 Ce launch lance les différents noeuds nécessaires.
 
@@ -35,9 +35,9 @@ Il lance ensuite rviz avec la configuration enregistrée avec `<node pkg="rviz" 
 Puis le gmapping avec `<node name="gmapping" pkg="gmapping" type="slam_gmapping"/>`
 Puis les deux noeuds du répertoire scripts
 
-###Composition de scripts
+#### Composition de scripts
 
-###vision.py
+##### vision.py
 
 Tout d'abord on lance le noeud et on le déinit en tant que publisher dans le topic `can` et on l'abonne aux deux topics de la caméra nécessaire (c'est à dire l'image et les niveaux de profondeur.
 On définit le rate également afin d'éviter de traiter toutes les images mais un nombre réduit qui est suffisant.
@@ -59,7 +59,7 @@ Une fois fait on calcule les coordonnées de l'object detectés dans un repère 
  
 Une fois fait on vérifie certaines conditions (la taille de l'objet et sa distance pour limiter les erreurs quand la caméra détecte des objets trop éloignés),on publie ensuite l'objet en tant que PoseStamped dans le topic `can`.
 
-###markerbottle.py
+##### markerbottle.py
 
 On inialise le noeud en tant que publisher dans le topic `/bottle` et on l'abonne au topic `can`
 
