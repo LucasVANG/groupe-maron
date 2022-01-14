@@ -8,17 +8,29 @@ from geometry_msgs.msg import Pose
 from visualization_msgs.msg import Marker
 from std_msgs.msg import String
 import math as mth
-import random as rdm
 import tf
-from grp-marron import srv
+from std_srvs.srv import SetBool
 
 rospy.init_node("new_bottle")
 pub = rospy.Publisher(
     '/bottle',
     Marker, queue_size=10
 )
+
+def print_Bottle(req):
+    global list_bottle
+    msg=''
+    if not any(t[2]>10 for t in list_bottle):
+        return (False,"Aucune bouteille presente")
+    else:
+        for a in range(len(list_bottle)):
+            if list_bottle[a][2]>10:
+                msg+="x=" + str(list_bottle[a][0])+","+"y="+ str(list_bottle[a][1])+"\n"
+    return (True, msg)
+
+
 tfListener = tf.TransformListener()
-rospy.Service('Liste_Bouteille', srv.liste_bottle, print_List_Bottle)
+rospy.Service('Liste_Bouteille', SetBool,print_Bottle)
 list_bottle=[]
 i=0
 
@@ -86,14 +98,6 @@ def marker(data):
                         
 
 
-
-
-def print_List_Bottle():
-    global list_bottle
-    for a in range(len(list_bottle)):
-        if list_bottle[a][2]>10:
-            print (bottle[a][0], bottle[a][1])
-    return 1
 
     
 def start():
