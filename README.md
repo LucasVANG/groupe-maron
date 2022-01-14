@@ -2,13 +2,18 @@
 
 Ceci est la branche du challenge 2 du groupe marron
 
-## Installation
+## Installation et lancement
 
 Une fois la branche récupérée, il faut effectuer catkin_make (et eventuellemet source).
 
 Pour lancer la solution créée il faut lancer la commande `roslaunch grp-marron challenge2.launch`
 
 Ce launch utilise l'horloge du rosbag lancée. Ainsi pour lancer le rosbag correctement il faut faire la commande `rosbag play --clock nom_rosbag`
+
+Pour obtenir la liste des Bouteilles detectées il faut appeler le service `/Liste_Bouteille` avec la commande `rosservice call /Liste_Bouteille 0` qui retournera deux varaibles :
+-Sucess qui retourne False si il n'y a pas de bouteille, ou True si une bouteille est présente
+-Message qui retourne le texte `"Aucune bouteille presente"` ou retourne la liste des bouteilles detectées avec leur coordonnées en x et y sur la map.
+
 
 ## Composition
 
@@ -72,11 +77,12 @@ A chaque fois qu'il reçoit une position du topic il le transforme du repère de
 Si il n'y a pas de bouteille sauvegarder on l'enregistre (même si il s'agit d'une erreur de détection cela sera réglé juste aprés)
 
 Sinon
-On vérifie si l'objet détecté est proch ou non d'une des bouteilles déjà placées sur la map. Si oui, on cosidère que c'est la même bouteille et on fait la moyenne de leur coordonnées pour avoir une position plus précise. Sinon on place l'objet comme une nouvelle bouteille. De même cette étape fera en sorte que la première bouteille detectée s'affichera (car elle sera detecter plusieurs fois) or si c'est une erreur, il n'y aura pas plusieurs détections et sera donc mise de côté et non publié comme marker.
+On vérifie si l'objet détecté est proch ou non d'une des bouteilles déjà placées sur la map. Si oui, on cosidère que c'est la même bouteille et on fait la moyenne de leur coordonnées pour avoir une position plus précise. Sinon on place l'objet comme une nouvelle bouteille. On demande également un nombre minimal de détection pour considérer l'objet détecter comme une bouteille (ici 10 détections). Si cela n'est pas respecté on ne publie pas ce marker car c'est probablement une erreur.
 
 Chaque nouvelle bouteille a ses coordonnées en x,y sauvegarder dans une variable contenant la liste des bouteilles. De plus on vérifie que dans cette liste et dans les markers, il n'y a pas de boublons pour avoir le bon compte de bouteille au final.
 
 
+Ce noeud gère également le service de d'affichage de la liste des bouteilles cité au début de ce texte en utisant le service SetBool de std_srvs
     
   
 
