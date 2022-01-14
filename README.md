@@ -25,3 +25,29 @@ Ce package est composé de 3 répertoires et 2 fichiers textes :
 -launch qui contient le launch challenge2 
 
 -rviz qui contient la configuration utilisé dans le launch de rviz
+
+####Composition du launch
+
+Ce launch lance les différents noeuds nécessaires.
+
+Tout d'abord il fixe l'horloge à celle du rosbag avec ` <param name="/use_sim_time" value="true" />`
+Il lance ensuite rviz avec la configuration enregistrée avec `<node pkg="rviz" type="rviz" name="rviz" args="-d $(find grp-marron)/rviz/gmappingbot.rviz"/>
+Puis le gmapping avec `<node name="gmapping" pkg="gmapping" type="slam_gmapping"/>`
+Puis les deux noeuds du répertoire scripts
+
+####Composition de scripts
+
+#####vision.py
+
+Tout d'abord on lance le noeud et on le déinit en tant que publisher dans le topic `can` et on l'abonne aux deux topics de la caméra nécessaire (c'est à dire l'image et les niveaux de profondeur.
+On définit le rate également afin d'éviter de traiter toutes les images mais un nombre réduit qui est suffisant.
+On définit également lo et hi pour déterminer l'intervalle de détection HSV.
+
+Les données de profondeurs sont sauvegardées dans une variable globable pour être utilisées dans le traitement de l'image avec :
+`def distance(data):
+    global disArr
+    disArr=np.array(bridge.imgmsg_to_cv2(data,desired_encoding="passthrough"))`
+
+
+
+
