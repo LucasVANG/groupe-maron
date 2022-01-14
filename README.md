@@ -1,18 +1,18 @@
 # Challenge 2 groupe marron
 
-    Ceci est la branche du challenge 2 du groupe marron
+Ceci est la branche du challenge 2 du groupe marron
 
 ## Installation et lancement
 
-    Une fois la branche récupérée, il faut effectuer catkin_make (et eventuellemet source).
+Une fois la branche récupérée, il faut effectuer catkin_make (et eventuellemet source).
 
-    Pour lancer la solution créée il faut lancer la commande `roslaunch grp-marron challenge2.launch`
+Pour lancer la solution créée il faut lancer la commande    `roslaunch grp-marron challenge2.launch`
 
-    Ce launch utilise l'horloge du rosbag lancée. Ainsi pour lancer le rosbag correctement il faut faire la commande `rosbag play --clock nom_rosbag`
+Ce launch utilise l'horloge du rosbag lancée. Ainsi pour lancer le rosbag correctement il faut faire la commande `rosbag play --clock nom_rosbag`
 
-    Pour obtenir la liste des Bouteilles detectées il faut appeler le service `/Liste_Bouteille` avec la commande `rosservice call /Liste_Bouteille 0` qui  retournera deux varaibles :
-    -Sucess qui retourne False si il n'y a pas de bouteille, ou True si une bouteille est présente
-    -Message qui retourne le texte `"Aucune bouteille presente"` ou retourne la liste des bouteilles detectées avec leur coordonnées en x et y sur la map.
+Pour obtenir la liste des Bouteilles detectées il faut appeler le service `/Liste_Bouteille` avec la commande `rosservice call /Liste_Bouteille 0` qui  retournera deux varaibles :
+-Sucess qui retourne False si il n'y a pas de bouteille, ou True si une bouteille est présente
+-Message qui retourne le texte `"Aucune bouteille presente"` ou retourne la liste des bouteilles detectées avec leur coordonnées en x et y sur la map.
 
 
 ## Composition
