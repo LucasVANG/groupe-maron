@@ -47,6 +47,15 @@ Les données de profondeurs sont sauvegardées dans une variable globable pour �
 <br/>`def distance(data):`
     <br/>`global disArr`
     <br/>`disArr=np.array(bridge.imgmsg_to_cv2(data,desired_encoding="passthrough"))`
+    
+On effectue ensuite un seuillage par couleur sur l'image reçu pour seulement récupérer l'objet voulu.
+
+Une fois fait on calcule les coordonnées de l'object detectés dans un repère cartésien avec la caméra comme origine du repère parallele au sol avec la fonction:
+<br/>`def Coor(x,pro):`
+    <br/>`angle=43.55*(x-640)/640`
+    <br/>`angle=angle*math.pi/180 # passage en radians`
+    <br/>`return [math.cos(angle) * pro, math.sin( angle ) * pro-35] ` 
+
 
 
 
