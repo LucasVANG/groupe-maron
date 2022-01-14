@@ -77,7 +77,6 @@ def marker(data):
             i+=1
         else:
             for a in range(0,i,1):
-                print(a,list_bottle[a])
                 if (( mth.sqrt((x-list_bottle[a][0])**2 + (y-list_bottle[a][1])**2))<0.2):
                     list_bottle[a][0]=(list_bottle[a][0]+x)/2
                     list_bottle[a][1]=(list_bottle[a][1]+y)/2
