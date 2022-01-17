@@ -26,7 +26,7 @@ def interpret_scan(data):
         if(0.1 < t[0] < 0.3):
             if( -0.25 < t[1] < 0):
                 msg= "D"
-            if( 0.25 > t[1] > 0 ):
+            if( 0.25> t[1] > 0 ):
                 msg= "G"
     pub.publish(msg)
 
