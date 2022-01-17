@@ -29,23 +29,21 @@ def move_command(data):
 
     # Compute cmd_vel here and publish... (do not forget to reduce timer duration)
     cmd= Twist()
-    if rotating==False:
-        time=uniform(0.6,1.6)
-        if data.data=="D":
-            cmd.angular.z=1
-            rotating=True
-            rospy.Timer(rospy.Duration(time),rotation,oneshot=True)
+    time=uniform(1,2)
+    if data.data=="D":
+        cmd.angular.z=2
+        rotating=True
+        rospy.Timer(rospy.Duration(1),rotation,oneshot=True)
             
-        elif data.data=="G":
-            cmd.angular.z=-1
-            rotating=True
-            rospy.Timer(rospy.Duration(time),rotation,oneshot=True)
-            
+    elif data.data=="G":
+        cmd.angular.z=-1.5
+        rotating=True
+        rospy.Timer(rospy.Duration(1),rotation,oneshot=True)
+
+    elif rotating==False:
+        cmd.linear.x= 0.2
         
-        else:
-            cmd.linear.x= 0.5
-        
-        pub.publish(cmd)
+    pub.publish(cmd)
 
 if __name__ == '__main__':
     move()

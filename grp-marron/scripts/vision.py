@@ -51,12 +51,8 @@ def createPoseStampedPub(x,y):
     cmd.header.stamp=timeStamp
     cmd.header.frame_id='camera_link'
     cmd.pose.position.x=x/1000
-    cmd.pose.position.x+=0.15
+
     cmd.pose.position.y=-y/1000
-    if cmd.pose.position.y<0:
-        cmd.pose.position.y-=0.1
-    else :
-        cmd.pose.position.y+=0.1
     cmd.pose.position.z=0
     cmd.pose.orientation.x=0
     cmd.pose.orientation.y=0
