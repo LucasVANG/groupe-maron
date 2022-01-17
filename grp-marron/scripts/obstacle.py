@@ -32,4 +32,3 @@ def interpret_scan(data):
 
 rospy.Subscriber('scan', LaserScan, interpret_scan)
 rospy.spin()
-

@@ -12,10 +12,8 @@
 	    <arg name="y" value="-2.95" />
 	    <arg name="yaw" value="2.86" />
     </include>
-    <node name="move1" pkg="grp-marron" type="move.py" />
+    <node name="move1" pkg="grp-marron" type="move.py" output="screen" />
     <node name="obstaclelist" pkg="grp-marron" type="obstacle.py"/>
-    <group if="$(arg rviz)">
-    	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find grp-marron)/rviz/challenge.rviz"/>
-    </group>
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find grp-marron)/rviz/challenge.rviz"/>
 	<node name="gmapping" pkg="gmapping" type="slam_gmapping"/>
 </launch>

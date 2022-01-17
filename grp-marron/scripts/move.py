@@ -5,7 +5,7 @@ from std_msgs.msg import String
 from random import *
 
 pub= False
-i=0
+rotating = False
 
 def move():
     global pub
@@ -18,24 +18,32 @@ def move():
     rospy.Subscriber('isObstacle', String, move_command)
     rospy.spin()
 
+def rotation(data):
+    global rotating
+    rotating=False
+
 # Publish velocity commandes:
 def move_command(data):
+    global rotating
 
 
     # Compute cmd_vel here and publish... (do not forget to reduce timer duration)
     cmd= Twist()
-
-    if data.data=="D":
-        cmd.angular.z=10
+    if rotating==False:
+        if data.data=="D":
+            cmd.angular.z=1
+            rotating=True
+            rospy.Timer(rospy.Duration(2),rotation,oneshot=True)
+            
+        elif data.data=="G":
+            cmd.angular.z=-1
+            rotating=True
+            rospy.Timer(rospy.Duration(2),rotation,oneshot=True)
         
-    elif data.data=="G":
-        cmd.angular.z=-10
-     
-    else:
-        cmd.linear.x= 0.3
-    
-    pub.publish(cmd)
+        else:
+            cmd.linear.x= 1
+        
+        pub.publish(cmd)
 
 if __name__ == '__main__':
     move()
-
