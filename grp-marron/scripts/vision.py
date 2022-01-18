@@ -63,7 +63,7 @@ def createPoseStampedPub(x,y):
 
 def Coor(x,pro):
     
-    angle=43.55*(x-640)/640
+    angle=43*(x-640)/640
     angle=angle*math.pi/180 # passage en radians
     return [math.cos(angle) * pro, math.sin( angle ) * pro-35] 
 

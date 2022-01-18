@@ -22,6 +22,7 @@ def rotation(data):
     global rotating
     rotating=False
 
+
 # Publish velocity commandes:
 def move_command(data):
     global rotating
@@ -30,20 +31,15 @@ def move_command(data):
     # Compute cmd_vel here and publish... (do not forget to reduce timer duration)
     cmd= Twist()
     time=uniform(1,2)
-    if data.data=="D":
-        cmd.angular.z=2
-        rotating=True
-        rospy.Timer(rospy.Duration(1),rotation,oneshot=True)
-            
-    elif data.data=="G":
-        cmd.angular.z=-1.5
-        rotating=True
-        rospy.Timer(rospy.Duration(1),rotation,oneshot=True)
-
-    elif rotating==False:
-        cmd.linear.x= 0.2
-        
-    pub.publish(cmd)
+    print(rotating)
+    if data.data=="R":
+        cmd.linear.x=0.5
+    elif data.data=="S":
+        cmd.angular.z=1
+    elif data.data=="V":
+        cmd.linear.x=0.2
+    elif data.data=="TV":
+        cmd.linear.x=0.3
 
 if __name__ == '__main__':
     move()
