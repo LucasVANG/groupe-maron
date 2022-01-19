@@ -19,7 +19,7 @@ def obs_plus_proches(data):
     dist_min_G=100
     dist_min_D=100
     for aDistance in data.ranges :
-        if 0.1 < aDistance and aDistance < 5.0 and angle > -1.57 and angle < 1.57:
+        if 0.1 < aDistance and aDistance < 5.0 and angle > -1.3 and angle < 1.3:
             if angle < 0:
                 if dist_min_G > aDistance:
                     dist_min_G=aDistance
@@ -32,75 +32,69 @@ def obs_plus_proches(data):
         angle+= data.angle_increment
     return dist_min_G,angle_min_G,dist_min_D,angle_min_D
 
-def check_path(data, angle_G, angle_D, dist_min_G, dist_min_D): # cette fonction determine si le robot peut passer dans un chemin devant lui
+def ecart(angle_G, angle_D, dis_G, dis_D): 
     
-    aPoint_G= [math.cos(angle_G) * dist_min_G, math.sin( angle_G ) * dist_min_G]
-    aPoint_D= [math.cos(angle_D) * dist_min_D, math.sin( angle_D ) * dist_min_D]
-    dist= math.sqrt((aPoint_G[0]-aPoint_D[0])**2+(aPoint_G[1]-aPoint_D[1])**2)
-    if (dist<0.15):
-        print("I am spin")
-        spin=1
-        speed=0.03
+    pointA= [math.cos(angle_G) * dis_G, math.sin( angle_G ) * dis_G]
+    pointB= [math.cos(angle_D) * dis_D, math.sin( angle_D ) * dis_D]
+    euclidis= math.sqrt((pointA[0]-pointB[0])**2+(pointA[1]-pointB[1])**2)
+    if (euclidis<0.4):
+        tourne=100
+        vitesse=3
+        print("STOP")
     else:
-        print("I am speed")
-        speed=0.25
-        spin=0
-    return speed,spin
+        tourne=0
+        vitesse=25
+    return vitesse , tourne
 
 
 
 def interpret_scan(data):
     global pub
     msg = Int32MultiArray()
-    a=[]
-    dist_min_G,angle_min_G,dist_min_D,angle_min_D=obs_plus_proches(data) #On recupére les deux obstacles les plus proches à gauche et à droite
+    dis_gau,angle_gau,dis_dro,angle_dro=obs_plus_proches(data) 
 
-    if dist_min_G < dist_min_D:
-        dist_min=dist_min_G
-        angle_min=angle_min_G
+    if dis_gau < dis_dro:
+        dis=dis_gau
+        angle=angle_gau
     else:
-        dist_min= dist_min_D
-        angle_min=angle_min_D
+        dis= dis_dro
+        angle=angle_dro
 
-    speed=0.3
-    spin=0
+    vit_lin=30
+    vit_angular=0
 
-    if dist_min < 0.6: #si le robot detecte un objet à moins de 0,6
-        if dist_min < 0.4 : #selection de la vitesse en fonction de la distance de l'objet le plus proche
-            speed= 0.01
-            spin=1
-        elif dist_min < 0.5 :
-            speed= 0.2
-        elif dist_min >= 0.5 :
-            speed= 0.3
+    if dis < 0.6: 
+        if dis < 0.30 :
+             vit_lin=4
+        elif dis < 0.45 :
+             vit_lin= 20
+        elif dis >= 0.45 :
+             vit_lin= 30
 
-        if angle_min > 0: #selection de la rotation en fonction de la distance de l'objet le plus proche
-            spin = -0.2
-            if dist_min < 0.5: 
-                spin= -0.5
-        elif angle_min < 0:
-            spin = 0.2
-            if dist_min < 0.5:
-                spin=0.5
+        if angle > 0:
+            vit_angular = -20
+            if dis< 0.5: 
+                vit_angular= -50
+        elif angle < 0:
+            vit_angular = 20
+            if dis < 0.5:
+                vit_angular=50
         else:
-            spin=0
+            vit_angular=0
 
-        # cette fonction gere le chemin pour les coins et les couloires
-        if dist_min_D > dist_min_G-0.05 and dist_min_D < dist_min_G+0.05 and dist_min < 0.5:
-            speed,spin=check_path(data,angle_min_G,angle_min_D,dist_min_G,dist_min_D)
+    
+        if dis_dro > dis_gau-0.05 and dis_dro < dis_gau+0.05 and dis < 0.5:
+            speed,spin=ecart(angle_gau,angle_dro,dis_gau,dis_dro)
 
-    else: #si le robot ne detecte pas d'objet a 0,6 alors il va tout droit
-        spin = 0
-        speed = 0.5
-    spin=spin*100
-    speed=speed*100
-    msg.data.append(int(speed))
-    msg.data.append(int(spin))
+    else: 
+        vit_angular = 0
+        vit_lin = 50
+    msg.data.append(int( vit_lin))
+    msg.data.append(int(vit_angular))
     pub.publish(msg)
 
 
 
 rospy.Subscriber("/scan", LaserScan, interpret_scan )
-# spin() enter the program in a infinite loop
-print("Start move.py")
+# spin() enter the program in a infinite loopx²
 rospy.spin()

@@ -24,18 +24,16 @@ def move_command(data):
     spin=data.data[1]
     speed=speed/100
     spin=spin/100
-    speed=adapt_speed(speed)
-    spin=adapt_tourne(spin)
-    cmd.linear.x=speed
-    cmd.angular.z=spin
+    cmd.linear.x=adapt_speed(speed)
+    cmd.angular.z=adapt_tourne(spin)
     pub.publish(cmd)
 
 def adapt_speed(data): #Pour incrémenter lentement la vitesse
     global vitesse 
     if(vitesse<data):
-        vitesse+=0.05
+        vitesse+=0.04
     elif(vitesse>data):
-        vitesse-=0.05
+        vitesse-=0.04
     return vitesse
 
 def adapt_tourne(data):
