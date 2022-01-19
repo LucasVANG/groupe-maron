@@ -52,6 +52,7 @@ def createPoseStampedPub(x,y):
     cmd.header.frame_id='camera_link'
     cmd.pose.position.x=x/1000
 
+
     cmd.pose.position.y=-y/1000
     cmd.pose.position.z=0
     cmd.pose.orientation.x=0
@@ -65,7 +66,7 @@ def Coor(x,pro):
     
     angle=43*(x-640)/640
     angle=angle*math.pi/180 # passage en radians
-    return [math.cos(angle) * pro, math.sin( angle ) * pro-35] 
+    return [math.cos(angle) * pro, math.sin( angle ) * pro-30] 
 
 def distance(data):
     global disArr
