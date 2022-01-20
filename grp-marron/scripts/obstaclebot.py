@@ -19,7 +19,7 @@ def obs_plus_proches(data):
     dist_min_G=100
     dist_min_D=100
     for aDistance in data.ranges :
-        if 0.1 < aDistance and aDistance < 5.0 and angle > -1.3 and angle < 1.3:
+        if 0.1 < aDistance and aDistance < 5.0 and angle > -1.5 and angle < 1.5:
             if angle < 0:
                 if dist_min_G > aDistance:
                     dist_min_G=aDistance
@@ -88,7 +88,7 @@ def interpret_scan(data):
 
     else: 
         vit_angular = 0
-        vit_lin = 50
+        vit_lin = 40
     msg.data.append(int( vit_lin))
     msg.data.append(int(vit_angular))
     pub.publish(msg)
