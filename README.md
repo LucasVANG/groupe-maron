@@ -72,7 +72,10 @@ Ensuite on lance les 4 noeuds qui sont décrits juste après:
     	<node name="move" pkg="grp-marron" type="movebot.py"/>
 #### Composition de scripts
 
+
 ##### vision.py
+
+
 
 Tout d'abord on lance le noeud et on le déinit en tant que publisher dans le topic `can` et on l'abonne aux deux topics de la caméra nécessaire (c'est à dire l'image et les niveaux de profondeur.
 On définit le rate également afin d'éviter de traiter toutes les images mais un nombre réduit qui est suffisant.
@@ -100,7 +103,11 @@ def Coor(x,pro):
 
 Une fois fait on vérifie certaines conditions (la taille de l'objet et sa distance pour limiter les erreurs quand la caméra détecte des objets trop éloignés),on publie ensuite l'objet en tant que PoseStamped dans le topic `can`.
 
+
+
 ##### markerbottle.py
+
+
 
 On inialise le noeud en tant que publisher dans le topic `/bottle` et on l'abonne au topic `can`
 
@@ -123,7 +130,11 @@ Chaque nouvelle bouteille a ses coordonnées en x,y sauvegarder dans une variabl
 
 Ce noeud gère également le service de d'affichage de la liste des bouteilles cité au début de ce texte en utisant le service SetBool de std_srvs
 
+
+
 ##### obstaclebot.py
+
+
 
 Ce noeud se charge de détecter les obstacles grâce au laser installé sur le robot et de déterminer le comportement à adopter.
 
@@ -144,7 +155,11 @@ Ensuite le noeud regard si l'obstacle à droite et à gauche forment un coin. Si
 
 Le noeud envoie ensuite ses ordres dans un message sous forme de 2 int au noeud movebot
 
+
+
 ##### movebot.py
+
+
 
 Ce noeud récupère les ordres de obstaclebot en tant que int et se contente de les diviser par 100 pour avoir la valeur voulue dans la vitesse linéaire et angulaire.
 
