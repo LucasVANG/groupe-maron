@@ -6,7 +6,7 @@ from std_msgs.msg import Int32MultiArray
 
 pub= False
 vitesse=0
-tourne=0
+angulaire=0
 def move():
     global pub
     rospy.init_node('detection', anonymous=True)
@@ -37,12 +37,12 @@ def adapt_vit(data): #Pour incrémenter lentement la vitesse
     return vitesse
 
 def adapt_tourne(data):
-    global tourne
-    if(tourne<data):
-        tourne+=0.05
-    elif(tourne>data):
-        tourne-=0.05
-    return tourne
+    global angulaire
+    if(angulaire<data):
+        angulaire+=0.05
+    elif(angulaire>data):
+        angulaire-=0.05
+    return angulaire
     
 
 
