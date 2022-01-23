@@ -1,6 +1,6 @@
-# Challenge 2 groupe marron
+# Challenge 3 groupe marron
 
-Ceci est la branche du challenge 2 du groupe marron
+Ceci est la branche du challenge 3 du groupe marron
 
 ## Installation et lancement
 
@@ -9,17 +9,17 @@ Une fois la branche récupérée, il faut effectuer catkin_make (et eventuelleme
 Pour lancer la solution créée il faut lancer la commande
 
 ```bash
-roslaunch grp-marron challenge2.launch
+roslaunch grp-marron challenge3.launch
 ```
 
-Ce launch utilise l'horloge du rosbag lancée. Ainsi pour lancer le rosbag correctement il faut faire la commande 
+Pour lancer la simulation sans détection d'objet il faut faire la commande 
 
 ```bash
-rosbag play --clock nom_rosbag
+roslaunch grp-marrin challenge3_simulation.launch
 ```
     
     
-Pour obtenir la liste des Bouteilles detectées il faut appeler le service `/Liste_Bouteille` avec la commande
+Pour obtenir la liste des Bouteilles detectées il faut appeler le service `/Liste_Bouteille` avec la commande (seulement disponible avec challenge3.launch)
 
 ```bash
 rosservice call /Liste_Bouteille 0
@@ -40,30 +40,36 @@ Ce package est composé de 3 répertoires et 2 fichiers textes :
 
 - CmakeLists.txt et package.xml qui sont présents pour le bon fonctionnement du package
 
-- scripts qui contient les deux noeuds de ce package
+- scripts qui contient les quatres noeuds de ce package
 
-- launch qui contient le launch challenge2 
+- launch qui contient les deux launch du challenge 3
 
 - rviz qui contient la configuration utilisé dans le launch de rviz
 
 ##### Composition du launch
 
-Ce launch lance les différents noeuds nécessaires.
+Seulement challenge3.launch sera décrit car challenge3_simulation est le même avec 2 noeuds en moins et lancement d'une simulation plutôt que du robot
 
-Tout d'abord il fixe l'horloge à celle du rosbag avec 
+Le launch active d'abord le robot, la camera et le laser  avec ces 3 lignes:
+	<include file="$(find turtlebot_bringup)/launch/minimal.launch"/>
+	<include file="$(find realsense2_camera)/launch/rs_aligned_depth.launch"/>
+	<node name="laser" pkg="urg_node" type="urg_node"/>
 
-<param name="/use_sim_time" value="true" />
+Il lance ensuite Rviz avec une configuration prédéfini et le gmapping avec :
 
-Il lance ensuite rviz avec la configuration enregistrée avec
+	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find grp-marron)/rviz/challengebot.rviz"/>
+	<node name="gmapping" pkg="gmapping" type="slam_gmapping"/>
 
-<node pkg="rviz" type="rviz" name="rviz" args="-d $(find grp-marron)/rviz/gmappingbot.rviz"/>
+En même temps le launch définit la transformation static entre le repère du laser et du robot afin qu'on puisse positionner correctement ce que repère le laser par rapport au robot:
 
-Puis le gmapping avec 
+	<node name="base" pkg="tf" type="static_transform_publisher" args=" 0.1 0 0 0 0 0 base_footprint laser 100"/>
+	
+Ensuite on lance les 4 noeuds qui sont décrits juste après:
 
-<node name="gmapping" pkg="gmapping" type="slam_gmapping"/>
-
-Puis les deux noeuds du répertoire scripts
-
+	<node name="obstaclelist" pkg="grp-marron" type="obstaclebot.py" output="screen"/>
+	<node name="vision" pkg="grp-marron" type="vision.py"/>
+    	<node name="marker" pkg="grp-marron" type="markerbottle.py"/>
+    	<node name="move" pkg="grp-marron" type="movebot.py"/>
 #### Composition de scripts
 
 ##### vision.py
@@ -110,10 +116,57 @@ bouteille=initialize_marker(i,x,y)
 Si il n'y a pas de bouteille sauvegarder on l'enregistre (même si il s'agit d'une erreur de détection cela sera réglé juste aprés)
 
 Sinon
-On vérifie si l'objet détecté est proch ou non d'une des bouteilles déjà placées sur la map. Si oui, on cosidère que c'est la même bouteille et on fait la moyenne de leur coordonnées pour avoir une position plus précise. Sinon on place l'objet comme une nouvelle bouteille. On demande également un nombre minimal de détection pour considérer l'objet détecter comme une bouteille (ici 10 détections). Si cela n'est pas respecté on ne publie pas ce marker car c'est probablement une erreur.
+On vérifie si l'objet détecté est proche ou non d'une des bouteilles déjà placées sur la map. Si oui, on cosidère que c'est la même bouteille on additionne les nouvelles coordonnées aux anciennes multipliés par le nombre de détection puis on divise par le nombre de détection+1 pour qu'une valeur fausse ne décale pas le marker de manière exagérée. Sinon on place l'objet comme une nouvelle bouteille. On demande également un nombre minimal de détection pour considérer l'objet détecter comme une bouteille (ici 10 détections). Si cela n'est pas respecté on ne publie pas ce marker car c'est probablement une erreur.
 
 Chaque nouvelle bouteille a ses coordonnées en x,y sauvegarder dans une variable contenant la liste des bouteilles. De plus on vérifie que dans cette liste et dans les markers, il n'y a pas de boublons pour avoir le bon compte de bouteille au final.
 
 
 Ce noeud gère également le service de d'affichage de la liste des bouteilles cité au début de ce texte en utisant le service SetBool de std_srvs
+
+##### obstaclebot.py
+
+Ce noeud se charge de détecter les obstacles grâce au laser installé sur le robot et de déterminer le comportement à adopter.
+
+Tout d'abord le noeud détermine quel est l'obstacle le plus proche sur la droite et sur la gauche. on récupère ainsi les coordonnées polaires de ces obstacles par rapport au robot:
+
+```python
+dis_gau,angle_gau,dis_dro,angle_dro=obs_plus_proches(data) 
+```
+
+Une fois cela récupéré on détermine lequel des deux est le plus proche.
+
+Le noeud ensuite regarde la distance, si il est supérieur à 60cm on ignore l'obstacle et on continue a pleine vitesse. Sinon plus l'obstacle est proche, plus l'ordre de vitesse diminue (entre 60-45, entre 45-30 et en dessous de 30).
+
+Quand un obstacle est proche on regarde si il est à droite ou à gauche pour déterminer dans quel sens tourner.
+
+
+Ensuite le noeud regard si l'obstacle à droite et à gauche forment un coin. Si oui le noeud déterminera si il est possible de continuer dans cet espace réduit ou si il faut faire demi-tour car il n'y a pas assez de place pour le robot.
+
+Le noeud envoie ensuite ses ordres dans un message sous forme de 2 int au noeud movebot
+
+##### movebot.py
+
+Ce noeud récupère les ordres de obstaclebot en tant que int et se contente de les diviser par 100 pour avoir la valeur voulue dans la vitesse linéaire et angulaire.
+
+Ce noeud garde en mémoire également la vitesse linéaire et angulaire du robot. Lorsque qu'il reçoit des nouveaux ordres de vitesse, il adapte ses valeurs par incréments pour atteindre la vitesse voulue:
+
+ ```python
+ 
+def adapt_vit(data): #Pour incrémenter lentement la vitesse
+    global vitesse 
+    if(vitesse<data):
+        vitesse+=0.04
+    elif(vitesse>data):
+        vitesse-=0.04
+    return vitesse
+
+def adapt_tourne(data):
+    global angulaire
+    if(angulaire<data):
+        angulaire+=0.05
+    elif(angulaire>data):
+        angulaire-=0.05
+    return angulaire
+```
+Cela permet d'avoir une navigation plus fluide du robot en évitant des changement brusque du à des changements de vitesse trop rapide. Une fois fait le noeud publie ses ordres de vitesses dans cmd_vel_mux/input/navi pour que le robot s'adapte à la vitesse voulue
     
