@@ -20,15 +20,15 @@ def move():
 def move_command(data):
     global pub
     cmd=Twist()
-    speed=data.data[0]
-    spin=data.data[1]
-    speed=speed/100
-    spin=spin/100
-    cmd.linear.x=adapt_speed(speed)
-    cmd.angular.z=adapt_tourne(spin)
+    vit=data.data[0]
+    tourne=data.data[1]
+    vit=vit/100
+    tourne=tourne/100
+    cmd.linear.x=adapt_vit(vit)
+    cmd.angular.z=adapt_tourne(tourne)
     pub.publish(cmd)
 
-def adapt_speed(data): #Pour incrémenter lentement la vitesse
+def adapt_vit(data): #Pour incrémenter lentement la vitesse
     global vitesse 
     if(vitesse<data):
         vitesse+=0.04
