@@ -2,6 +2,8 @@
 
 Ceci est la branche du challenge 3 du groupe marron
 
+Pour la vidéo explicative du projet : https://www.youtube.com/watch?v=CnUKza1t8ZE
+
 ## Installation et lancement
 
 Une fois la branche récupérée, il faut effectuer catkin_make (et eventuellemet source).
